@@ -10,6 +10,7 @@ sealed class RenderMeshTest : MonoBehaviour
     {
         var rparams = new RenderParams(_material);
         var t = Time.time * 2;
+
         for (var i = 0; i < _counts.x; i++)
         {
             var x = i - _counts.x * 0.5f + 0.5f;
@@ -17,9 +18,8 @@ sealed class RenderMeshTest : MonoBehaviour
             {
                 var z = j - _counts.y * 0.5f + 0.5f;
                 var y = Mathf.Sin(Mathf.Sqrt(x * x + z * z) * 0.4f - t);
-                var pos = new Vector3(x, y, z);
-                var matrix = Matrix4x4.Translate(pos);
-                Graphics.RenderMesh(rparams, _mesh, 0, matrix);
+                var m = Matrix4x4.Translate(new Vector3(x, y, z));
+                Graphics.RenderMesh(rparams, _mesh, 0, m);
             }
         }
     }
