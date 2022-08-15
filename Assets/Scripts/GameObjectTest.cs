@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-sealed class ArrayOfGameObject : MonoBehaviour
+sealed class GameObjectTest : MonoBehaviour
 {
     [SerializeField] GameObject _prefab = null;
     [SerializeField] Vector2Int _counts = new Vector2Int(10, 10);

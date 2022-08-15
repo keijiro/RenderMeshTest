@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/DrawMesh.unity
-    guid: da159c8dd85c7468e99391d9dfcce8a2
-  - enabled: 1
-    path: Assets/GameObject.unity
+    path: Assets/Test.unity
     guid: 643a267c6afed4e6d9938165837216d4
   m_configObjects: {}

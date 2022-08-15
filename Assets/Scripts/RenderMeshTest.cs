@@ -1,7 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic;
 
-sealed class ArrayWithDrawMesh : MonoBehaviour
+sealed class RenderMeshTest : MonoBehaviour
 {
     [SerializeField] Mesh _mesh = null;
     [SerializeField] Material _material = null;
@@ -19,9 +18,8 @@ sealed class ArrayWithDrawMesh : MonoBehaviour
                 var z = j - _counts.y * 0.5f + 0.5f;
                 var y = Mathf.Sin(Mathf.Sqrt(x * x + z * z) * 0.4f - t);
                 var pos = new Vector3(x, y, z);
-                Graphics.DrawMesh(_mesh, pos, Quaternion.identity, _material, gameObject.layer);
-                //var matrix = Matrix4x4.Translate(pos);
-                //Graphics.RenderMesh(rparams, _mesh, 0, matrix);
+                var matrix = Matrix4x4.Translate(pos);
+                Graphics.RenderMesh(rparams, _mesh, 0, matrix);
             }
         }
     }
