@@ -1,35 +1,43 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 sealed class GameObjectTest : MonoBehaviour
 {
     [SerializeField] GameObject _prefab = null;
     [SerializeField] Vector2Int _counts = new Vector2Int(10, 10);
 
+    PositionBuffer _buffer;
     List<Transform> _instances = new List<Transform>();
+    Stopwatch _stopwatch = new Stopwatch();
 
     void Start()
     {
-        for (var i = 0; i < _counts.x; i++)
+        _buffer = new PositionBuffer(_counts.x, _counts.y);
+
+        for (var i = 0; i < _buffer.Positions.Length; i++)
         {
-            var x = i - _counts.x * 0.5f + 0.5f;
-            for (var j = 0; j < _counts.y; j++)
-            {
-                var pos = new Vector3(x, 0, j - _counts.y * 0.5f + 0.5f);
-                var go = Instantiate(_prefab, pos, Quaternion.identity, transform);
-                _instances.Add(go.transform);
-            }
+            var go = Instantiate(_prefab, Vector3.zero, Quaternion.identity, transform);
+            _instances.Add(go.transform);
         }
     }
 
+    void OnDestroy()
+      => _buffer.Dispose();
+
     void Update()
     {
-        var t = Time.time * 2;
-        foreach (var i in _instances)
-        {
-            var p = Vector3.Scale(i.localPosition, new Vector3(1, 0, 1));
-            var y = Mathf.Sin(p.magnitude * 0.4f - t);
-            i.localPosition = new Vector3(p.x, y, p.z);
-        }
+        _buffer.Update(Time.time);
+
+        var positions = _buffer.Positions;
+
+        _stopwatch.Reset();
+        _stopwatch.Start();
+
+        for (var i = 0; i < positions.Length; i++)
+            _instances[i].localPosition = positions[i];
+
+        _stopwatch.Stop();
+        Debug.Log($"{_stopwatch.Elapsed.TotalMilliseconds} ms");
     }
 }
