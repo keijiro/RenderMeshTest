@@ -1,5 +1,6 @@
 using UnityEngine;
-using Stopwatch = System.Diagnostics.Stopwatch;
+using UnityEngine.Rendering;
+using UnityEngine.Profiling;
 
 sealed class RenderMeshInstancedTest : MonoBehaviour
 {
@@ -8,7 +9,6 @@ sealed class RenderMeshInstancedTest : MonoBehaviour
     [SerializeField] Vector2Int _counts = new Vector2Int(10, 10);
 
     PositionBuffer _buffer;
-    Stopwatch _stopwatch = new Stopwatch();
 
     void Start()
       => _buffer = new PositionBuffer(_counts.x, _counts.y);
@@ -20,11 +20,13 @@ sealed class RenderMeshInstancedTest : MonoBehaviour
     {
         _buffer.Update(Time.time);
 
-        var rparams = new RenderParams(_material);
         var matrices = _buffer.Matrices;
 
-        _stopwatch.Reset();
-        _stopwatch.Start();
+        var rparams = new RenderParams(_material)
+          { receiveShadows = true,
+            shadowCastingMode = ShadowCastingMode.On };
+
+        Profiler.BeginSample("Mass Mesh Update");
 
         for (var offs = 0; offs < matrices.Length; offs += 1023)
         {
@@ -32,7 +34,6 @@ sealed class RenderMeshInstancedTest : MonoBehaviour
             Graphics.RenderMeshInstanced(rparams, _mesh, 0, matrices, count, offs);
         }
 
-        _stopwatch.Stop();
-        Debug.Log($"{_stopwatch.Elapsed.TotalMilliseconds} ms");
+        Profiler.EndSample();
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
+using UnityEngine.Profiling;
 using System.Collections.Generic;
-using Stopwatch = System.Diagnostics.Stopwatch;
 
 sealed class GameObjectTest : MonoBehaviour
 {
@@ -9,17 +9,20 @@ sealed class GameObjectTest : MonoBehaviour
 
     PositionBuffer _buffer;
     List<Transform> _instances = new List<Transform>();
-    Stopwatch _stopwatch = new Stopwatch();
 
     void Start()
     {
         _buffer = new PositionBuffer(_counts.x, _counts.y);
+
+        Profiler.BeginSample("Object Pool Init");
 
         for (var i = 0; i < _buffer.Positions.Length; i++)
         {
             var go = Instantiate(_prefab, Vector3.zero, Quaternion.identity, transform);
             _instances.Add(go.transform);
         }
+
+        Profiler.EndSample();
     }
 
     void OnDestroy()
@@ -31,13 +34,11 @@ sealed class GameObjectTest : MonoBehaviour
 
         var positions = _buffer.Positions;
 
-        _stopwatch.Reset();
-        _stopwatch.Start();
+        Profiler.BeginSample("Mass Mesh Update");
 
         for (var i = 0; i < positions.Length; i++)
             _instances[i].localPosition = positions[i];
 
-        _stopwatch.Stop();
-        Debug.Log($"{_stopwatch.Elapsed.TotalMilliseconds} ms");
+        Profiler.EndSample();
     }
 }
